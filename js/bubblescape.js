@@ -14,10 +14,11 @@ DEFAULT_SOCKET_URL = 'http://www.hyperlocalcontext.com/notman';
  * angular module.  The only external dependencies are:
  * - beaver, cormorant and cuttlefish (reelyActive)
  * - socket.io (btford)
+ * - ngSanitize (angular)
  */
 angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
                                'reelyactive.cormorant',
-                               'reelyactive.cuttlefish'])
+                               'reelyactive.cuttlefish', 'ngSanitize'])
 
 
 /**

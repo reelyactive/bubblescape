@@ -30,6 +30,7 @@ angular.module('reelyactive.cuttlefish', ['ui.bootstrap'])
         scope.types = [];
         scope.size = scope.size || DEFAULT_BUBBLE_SIZE;
         scope.toggle = scope.toggle || false;
+        scope.visible = scope.visible || [];
 
         if(scope.json && scope.json.hasOwnProperty("@graph")) {
           var graph = scope.json["@graph"];
@@ -54,11 +55,15 @@ angular.module('reelyactive.cuttlefish', ['ui.bootstrap'])
         else {
           scope.product = UNSUPPORTED_STORY_JSON;
           scope.types.push(TYPE_PRODUCT);
+          scope.unsupported = true;
         }
-        scope.current = scope.types[0];
-        var thisBubble = new Bubble(scope);
+        scope.types =
+          Bubble.availableTypes(scope.visible, scope.types);
+        if (scope.types.length > 0) {
+          scope.current = scope.types[0];
+          var thisBubble = new Bubble(scope);
+        }
       }
-      
 
       function formatItem(item, type) {
         if(!item.hasOwnProperty("schema:image")) {
@@ -78,7 +83,8 @@ angular.module('reelyactive.cuttlefish', ['ui.bootstrap'])
       scope: {
         json: "=",
         size: "@",
-        toggle: "="
+        toggle: "=",
+        visible: "@"
       },
       link: link,
       templateUrl: BUBBLE_TEMPLATE_URL

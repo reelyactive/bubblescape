@@ -12,10 +12,11 @@ angular.module('reelyactive.beaver', [])
     var stats = { appearances: 0, displacements: 0, keepalives: 0,
                   disappearances: 0 };
     var eventCallbacks = {};
+    var conditionSatisfied = function() { return true };
 
 
     function updateDevice(type, event) {
-      if(!isValidEvent) {
+      if(!isValidEvent || !conditionSatisfied()) {
         return;
       }
 
@@ -98,14 +99,18 @@ angular.module('reelyactive.beaver', [])
     }
 
 
-    var handleSocketEvents = function(Socket) {
+    var handleSocketEvents = function(Socket, condition) {
+      
+      if (typeof condition !== 'undefined') {
+        conditionSatisfied = condition;
+      }
 
       Socket.on('appearance', function(event) {
-        updateDevice('appearance', event);
+        updateDevice('appearance', event, condition);
       });
 
       Socket.on('displacement', function(event) {
-        updateDevice('displacement', event);
+        updateDevice('displacement', event, condition);
       });
 
       Socket.on('keep-alive', function(event) {

@@ -1,6 +1,9 @@
 .bubble {
   font-family: 'Open Sans', sans-serif;
-  display: inline-block;
+  text-align: center;
+  overflow: hidden;
+  display: none;
+  position: relative;
 }
 
 .bubble--photo {
@@ -14,6 +17,7 @@
   border: solid rgba(255, 255, 255, 0.2);
   box-sizing: content-box;
   position: relative;
+  margin: 0 auto;
 }
 
 .bubble--label {
@@ -26,6 +30,7 @@
   background-color: rgba(0, 0, 0, 0.9);
   border-radius: 10px;
   padding: 0 10px;
+  margin: 0;
 }
 
 .bubble--icon {

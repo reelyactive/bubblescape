@@ -2,36 +2,56 @@ var Bubble = function(scope) {
   var self = this;
   self.scope = scope;
   Loader.whenAvailable('jQuery', function() {
-    Compiler.initialize();
     self.initialize();
   });
 }
 
-var BubbleIDs = {
-  duplicates: {},
-  list: []
-}
-
 Bubble.generateID = function(jsonID) {
-  if (BubbleIDs.list.indexOf(jsonID) >= 0) { // duplicate ID
-    if (!BubbleIDs.duplicates.hasOwnProperty(jsonID)) {
-      BubbleIDs.duplicates[jsonID] = {count: 1};
+  if (Bubbles.ids.indexOf(jsonID) >= 0) { // duplicate ID
+    if (!Bubbles.dupeIDs.hasOwnProperty(jsonID)) {
+      Bubbles.dupeIDs[jsonID] = {count: 1};
     }
-    BubbleIDs.duplicates[jsonID].count += 1;
-    return jsonID + BubbleIDs.duplicates[jsonID].count;
+    Bubbles.dupeIDs[jsonID].count += 1;
+    return jsonID + Bubbles.dupeIDs[jsonID].count;
   } else {
-    BubbleIDs.list.push(jsonID);
+    Bubbles.ids.push(jsonID);
     return jsonID;
   }
+}
+
+Bubble.availableTypes = function(visible, all) {
+  
+  if (visible.length == 0) return all;
+  
+  var arr1 = visible.split(',');
+  var arr2 = all;
+  
+  var commonValues = [];
+  var i, j;
+  var arr1Length = arr1.length;
+  var arr2Length = arr2.length;
+
+  for (i = 0; i < arr1Length; i++) {
+      for (j = 0; j < arr2Length; j++) {
+          if (arr1[i] === arr2[j]) {
+              commonValues.push(arr1[i]);
+          }
+      }
+  }
+  
+  return commonValues;
+  
 }
 
 Bubble.prototype = {
   
   initialize: function(scope) {
     var self = this;
+    if (self.scope.unsupported) return false;
     self.style();
     self.addIcons();
     self.setHoverEvent();
+    self.startFloating();
   },
   
   setClasses: function() {
@@ -60,12 +80,20 @@ Bubble.prototype = {
     self.size = parseInt(self.scope.size);
     self.borderSize = self.size / 10;
     self.labelTop = self.size * 0.9;
+    self.containerSize = self.size + self.borderSize*6;
+    
+    self.container.css({
+      width: self.containerSize,
+      height: self.containerSize,
+      display: 'inline-block'
+    });
     
     self.bubble.css({
       width: self.size,
       height: self.size,
       borderRadius: self.size,
-      borderWidth: self.borderSize
+      borderWidth: self.borderSize,
+      top: self.borderSize*2
     });
     
     self.label.css({
@@ -197,14 +225,12 @@ Bubble.prototype = {
 
     self.hoverAnimation = {
       borderWidth: self.newBorder+'px',
-      top: '-='+self.borderIncrease+'px',
-      left: '-='+self.borderIncrease+'px'
+      top: '-='+self.borderSize*2+'px'
     };
     
     self.cssReset = {
       borderWidth: self.borderSize+'px',
-      top: 0,
-      left: 0
+      top: self.borderSize*2,
     }
   },
   
@@ -218,6 +244,10 @@ Bubble.prototype = {
     self.bubble.hover(function() {
       
       if (self.bubble.hasClass('hover')) return false;
+      
+      Bubbles.active = true;
+      Motion.stop();
+      $(self.bubbleClass).not(self.bubble).css('opacity', 0.4);
       
       self.bubble.addClass('hover');
       self.toggle.css({opacity: 0});
@@ -249,9 +279,18 @@ Bubble.prototype = {
       });
       self.toggle.css({opacity: 1});
       
+      $(self.bubbleClass).css('opacity', 1.0);
+      Motion.resume();
+      Bubbles.active = false;
+      
       //Connections.redraw();
       
     });
+  },
+  
+  startFloating: function() {
+    var self = this;
+    Motion.start(self.container);
   },
   
   checkHover: function() {
@@ -312,7 +351,22 @@ var BubbleServices = {
   
 }
 
+var Bubbles = {
+  
+  active: false,
+  ids: [],
+  dupeIDs: {},
+  
+  areActive: function() {
+    var self = this;
+    return self.active;
+  }
+  
+}
+
 var Loader = {
+  
+  loaded: {},
   
   getJQuery: function() {
     var script = document.createElement('script');
@@ -330,9 +384,14 @@ var Loader = {
   },
   
   whenAvailable: function(name, callback) {
+    var self = this;
     var interval = 10; // ms
     window.setTimeout(function() {
       if (window[name]) {
+        if (!self.loaded.hasOwnProperty(name)) { // first load
+          self.after(name);
+          self.loaded[name] = true;
+        }
         callback(window[name]);
       } else {
         window.setTimeout(arguments.callee, interval);
@@ -345,6 +404,16 @@ var Loader = {
       var img = new Image();
       img.src = arguments[i];
     }
+  },
+  
+  after: function(name) {
+    console.log('initing after ' + name);
+    switch(name) {
+      case 'jQuery':
+        Motion.initialize();
+        Compiler.initialize();
+        break;
+    }
   }
   
 }
@@ -353,10 +422,12 @@ var AngularCompile;
 
 var Compiler = { // need Angular to recompile new elements after DOM manipulation
   
+  initialized: false,
+  
   initialize: function() {
     var self = this;
     
-    if (typeof CompilerInitialized !== "undefined") return true;
+    if (self.initialized) return true;
     
     oldPrepend = $.fn.prepend;
     $.fn.prepend = function()
@@ -392,7 +463,7 @@ var Compiler = { // need Angular to recompile new elements after DOM manipulatio
       return result;
     }
     
-    CompilerInitialized = true;
+    self.initialized = true;
   }
   
 }

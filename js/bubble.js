@@ -290,7 +290,11 @@ Bubble.prototype = {
   
   startFloating: function() {
     var self = this;
-    Motion.start(self.container);
+    var motionClasses = ['forward-motion', 'backward-motion'];
+    var motionClass = motionClasses[Math.floor(Math.random()*motionClasses.length)];
+    var delay = Math.random()*10;
+    self.container.css({animationDelay: '-'+delay+'s'});
+    self.container.addClass(motionClass);
   },
   
   checkHover: function() {
@@ -389,7 +393,7 @@ var Loader = {
     window.setTimeout(function() {
       if (window[name]) {
         if (!self.loaded.hasOwnProperty(name)) { // first load
-          self.after(name);
+          self.afterLoad(name);
           self.loaded[name] = true;
         }
         callback(window[name]);
@@ -406,7 +410,7 @@ var Loader = {
     }
   },
   
-  after: function(name) {
+  afterLoad: function(name) {
     console.log('initing after ' + name);
     switch(name) {
       case 'jQuery':

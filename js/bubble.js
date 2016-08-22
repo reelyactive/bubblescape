@@ -446,19 +446,26 @@ Array.prototype.random = function(v) {
 var Placement = {
   
   initialized: false,
-  size: 0,
-  numRows: 0,
-  numCols: 0,
+  buffer: 1.13, maxNoise: 15.0,
+  origSize: 0, size: 0,
+  numRows: 0, numCols: 0,
+  spareX: 0, spareY: 0,
   emptyBoxes: [],
-  spareX: 0,
-  spareY: 0,
   
   initialize: function(size) {
     var self = this;
     if (self.initialized) return true;
-    self.size = size;
+    self.origSize = size;
+    self.size = size*self.buffer;
     self.setEmptyBoxes();
+    self.setNoise();
     self.initialized = true;
+  },
+  
+  setNoise: function() {
+    var self = this;
+    var multiplier = (self.buffer - 1.0) / 2;
+    self.maxNoise = multiplier * self.size;
   },
   
   setEmptyBoxes: function() {
@@ -486,12 +493,18 @@ var Placement = {
     return randomBox;
   },
   
+  plusOrMinus: function() {
+    return Math.random() < 0.5 ? -1 : 1;
+  },
+  
   convertToPosition: function(box) {
     var self = this;
     var left = box.col * self.size;
     var top = box.row * self.size;
-    left += self.spareX * 0.5 * ((box.col+1) / self.numCols);
-    top += self.spareY * 0.5 * ((box.row+1) / self.numRows);
+    left += self.spareX * 0.8 * ((box.col+1) / self.numCols);
+    top += self.spareY * 0.8 * ((box.row+1) / self.numRows);
+    left += self.plusOrMinus() * self.maxNoise;
+    top += self.plusOrMinus() * self.maxNoise;
     return {x: left, y: top};
   },
   

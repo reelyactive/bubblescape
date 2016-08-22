@@ -3,7 +3,29 @@
   text-align: center;
   overflow: hidden;
   display: none;
-  position: relative;
+  position: absolute;
+}
+
+bubble.ng-enter {
+  transition:0.3s linear all;
+  opacity:0;
+}
+
+bubble.ng-enter.ng-enter-active {
+  opacity:1;
+}
+
+bubble.ng-leave {
+  transition:0.3s linear all;
+  opacity:1;
+}
+bubble.ng-leave.ng-leave-active {
+  opacity:0;
+}
+
+.paused {
+  -webkit-animation-play-state: paused; /* Chrome, Safari, Opera */
+  animation-play-state: paused;
 }
 
 .forward-motion {
@@ -63,7 +85,7 @@
   display: inline-block;
   background-color: rgba(0, 0, 0, 0.9);
   border-radius: 10px;
-  padding: 0 10px;
+  padding: 3px 10px;
   margin: 0;
 }
 

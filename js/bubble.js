@@ -71,6 +71,38 @@ Bubble.prototype = {
     self.toggle = $(self.toggleClass, self.container);
   },
   
+  place: function() {
+    var self = this;
+    var placed = false;
+    var buffer = 60;
+    var numTries = 0;
+    var maxTries = 3000;
+    while (!placed && numTries < maxTries) {
+      var randLeft = Math.random() * ($(window).width() - self.size-buffer);
+      var randTop = Math.random() * ($(window).height() - self.size-buffer);
+      var randBottom = randTop + self.size+buffer;
+      var randRight = randLeft + self.size+buffer;
+      var collision = false;
+      $('.bubble').each(function() {
+        var left = $(this).offset().left;
+        var top = $(this).offset().top;
+        var bottom = top + self.size+buffer;
+        var right = left + self.size+buffer;
+        var overlap = !(right < randLeft || 
+                        left > randRight || 
+                        bottom < randTop || 
+                        top > randBottom);
+        if (overlap) collision = true;
+      });
+      if (!collision) {
+        console.log('place found!');
+        placed = true;
+        self.position = {x: randLeft, y: randTop};
+      }
+      numTries++;
+    }
+  },
+  
   style: function() {
     var self = this;
     
@@ -82,9 +114,20 @@ Bubble.prototype = {
     self.labelTop = self.size * 0.9;
     self.containerSize = self.size + self.borderSize*6;
     
+    //self.place();
+  
+    var emptyBox = Placement.findAvailable(self.containerSize);
+    //console.log(emptyBox);
+    self.box = emptyBox.box;
+    self.position = emptyBox.pos;
+    
+    if (!self.position) return false;
+    
     self.container.css({
       width: self.containerSize,
       height: self.containerSize,
+      left: self.position.x,
+      top: self.position.y,
       display: 'inline-block'
     });
     
@@ -97,7 +140,8 @@ Bubble.prototype = {
     });
     
     self.label.css({
-      fontSize: self.borderSize,
+      fontSize: self.borderSize+'px',
+      lineHeight: self.borderSize+'px',
       top: self.labelTop,
       borderRadius: self.borderSize/2
     });
@@ -246,8 +290,8 @@ Bubble.prototype = {
       if (self.bubble.hasClass('hover')) return false;
       
       Bubbles.active = true;
-      Motion.stop();
-      $(self.bubbleClass).not(self.bubble).css('opacity', 0.4);
+      self.stopFloating();
+      $(self.bubbleClass).not(self.bubble).fadeTo(150, 0.2);
       
       self.bubble.addClass('hover');
       self.toggle.css({opacity: 0});
@@ -279,8 +323,10 @@ Bubble.prototype = {
       });
       self.toggle.css({opacity: 1});
       
-      $(self.bubbleClass).css('opacity', 1.0);
-      Motion.resume();
+      
+      $(self.bubbleClass).not(self.bubble).finish();
+      $(self.bubbleClass).not(self.bubble).fadeTo(150, 1.0);
+      self.resumeFloating();
       Bubbles.active = false;
       
       //Connections.redraw();
@@ -295,6 +341,18 @@ Bubble.prototype = {
     var delay = Math.random()*10;
     self.container.css({animationDelay: '-'+delay+'s'});
     self.container.addClass(motionClass);
+  },
+  
+  stopFloating: function() {
+    var self = this;
+    self.container.css('-webkit-animation-play-state', 'paused');
+    self.container.css('animation-play-state', 'paused');
+  },
+  
+  resumeFloating: function() {
+    var self = this;
+    self.container.css('-webkit-animation-play-state', 'running');
+    self.container.css('animation-play-state', 'running');
   },
   
   checkHover: function() {
@@ -324,9 +382,16 @@ Bubble.prototype = {
   icons: function() {
     var self = this;
     return $(self.iconClass, self.activeBubble());
+  },
+  
+  removed: function() {
+    var self = this;
+    console.log('this bubble removed');
+    if (self.position) Placement.boxNowEmpty(self.box);
   }
   
 }
+
 
 var BubbleServices = {
   
@@ -355,6 +420,7 @@ var BubbleServices = {
   
 }
 
+
 var Bubbles = {
   
   active: false,
@@ -364,9 +430,96 @@ var Bubbles = {
   areActive: function() {
     var self = this;
     return self.active;
+  },
+  
+  remove: function(id) {
+    console.log('removed ' + id);
   }
   
 }
+
+Array.prototype.random = function(v) {
+  var item = this[Math.floor(Math.random()*this.length)];
+  return item;
+};
+
+var Placement = {
+  
+  initialized: false,
+  size: 0,
+  numRows: 0,
+  numCols: 0,
+  emptyBoxes: [],
+  spareX: 0,
+  spareY: 0,
+  
+  initialize: function(size) {
+    var self = this;
+    if (self.initialized) return true;
+    self.size = size;
+    self.setEmptyBoxes();
+    self.initialized = true;
+  },
+  
+  setEmptyBoxes: function() {
+    var self = this;
+    var windowHeight = $(window).height();
+    var windowWidth = $(window).width();
+    self.numRows = Math.floor(windowHeight / self.size);
+    self.numCols = Math.floor(windowWidth / self.size);
+    for (var row = 0; row < self.numRows; row++) {
+      for (var col = 0; col < self.numCols; col++) {
+        self.emptyBoxes.push({row, col});
+      }
+    }
+    self.spareX = windowWidth - (self.size * self.numCols);
+    self.spareY = windowHeight - (self.size * self.numRows);
+    console.log('spareX: ' + self.spareX);
+  },
+  
+  findEmptyBox: function() {
+    var self = this;
+    var randomBox = self.emptyBoxes.random();
+    // remove from array
+    var index = self.emptyBoxes.indexOf(randomBox);
+    self.emptyBoxes.splice(index, 1);
+    return randomBox;
+  },
+  
+  convertToPosition: function(box) {
+    var self = this;
+    var left = box.col * self.size;
+    var top = box.row * self.size;
+    left += self.spareX * 0.5 * ((box.col+1) / self.numCols);
+    top += self.spareY * 0.5 * ((box.row+1) / self.numRows);
+    return {x: left, y: top};
+  },
+  
+  findAvailable: function(size) {
+    var self = this;
+    self.initialize(size);
+    if (self.emptyBoxes.length == 0) { // no more room!
+      return false;
+    }
+    //console.log(self.emptyBoxes);
+    var box = self.findEmptyBox();
+    var pos = self.convertToPosition(box);
+    return {box, pos};
+  },
+  
+  boxNowEmpty: function(box) {
+    var self = this;
+    //console.log('now empty:');
+    //console.log(box);
+    self.emptyBoxes.push(box);
+    //console.log('emptyBoxes:');
+    //console.log(self.emptyBoxes);
+  }
+  
+  
+  
+}
+
 
 var Loader = {
   
@@ -414,13 +567,22 @@ var Loader = {
     console.log('initing after ' + name);
     switch(name) {
       case 'jQuery':
-        Motion.initialize();
+        (function($){
+          $.event.special.destroyed = {
+            remove: function(o) {
+              if (o.handler) {
+                o.handler()
+              }
+            }
+          }
+        })(jQuery);
         Compiler.initialize();
         break;
     }
   }
   
 }
+
 
 var AngularCompile;
 
@@ -471,6 +633,7 @@ var Compiler = { // need Angular to recompile new elements after DOM manipulatio
   }
   
 }
+
 
 Loader.getJQuery();
 Loader.getFonts();

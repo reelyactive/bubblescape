@@ -20,7 +20,7 @@ UNSUPPORTED_STORY_JSON = {
 };
 
 
-angular.module('reelyactive.cuttlefish', ['ui.bootstrap'])
+angular.module('reelyactive.cuttlefish', ['ngAnimate','ui.bootstrap'])
 
   .directive('bubble', function() {
 
@@ -61,7 +61,7 @@ angular.module('reelyactive.cuttlefish', ['ui.bootstrap'])
           Bubble.availableTypes(scope.visible, scope.types);
         if (scope.types.length > 0) {
           scope.current = scope.types[0];
-          var thisBubble = new Bubble(scope);
+          scope.bubble = new Bubble(scope);
         }
       }
 
@@ -71,6 +71,10 @@ angular.module('reelyactive.cuttlefish', ['ui.bootstrap'])
         }
         return item;
       }
+      
+      scope.$on('$destroy', function() {
+        scope.bubble.removed();
+      });
 
       scope.$watch(attrs.json, function(json) {
         //scope.json = json;

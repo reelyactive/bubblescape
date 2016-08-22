@@ -22,7 +22,7 @@
 		<div ng-controller="InteractionCtrl">
 			<bubble ng-repeat="(id, device) in devices | orderBy:'receiverId'"
 				ng-if="hasFetchedStory(device)" id="{{id}}" toggle="false" visible="Person,Product"
-				json="getStory(device)" size="140px"></bubble>
+				json="getStory(device)" size="160px"></bubble>
     </div>
   </body>
 </html>

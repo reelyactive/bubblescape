@@ -49,9 +49,11 @@ Bubble.prototype = {
     var self = this;
     if (self.scope.unsupported) return false;
     self.style();
-    self.addIcons();
-    self.setHoverEvent();
-    self.startFloating();
+    if (self.scope.mode != 'ambient') {
+      self.addIcons();
+      self.setHoverEvent();
+    }
+    if (self.scope.motion) self.startFloating();
   },
   
   setClasses: function() {
@@ -481,7 +483,6 @@ var Placement = {
     }
     self.spareX = windowWidth - (self.size * self.numCols);
     self.spareY = windowHeight - (self.size * self.numRows);
-    console.log('spareX: ' + self.spareX);
   },
   
   findEmptyBox: function() {
@@ -514,7 +515,6 @@ var Placement = {
     if (self.emptyBoxes.length == 0) { // no more room!
       return false;
     }
-    //console.log(self.emptyBoxes);
     var box = self.findEmptyBox();
     var pos = self.convertToPosition(box);
     return {box, pos};
@@ -522,11 +522,7 @@ var Placement = {
   
   boxNowEmpty: function(box) {
     var self = this;
-    //console.log('now empty:');
-    //console.log(box);
     self.emptyBoxes.push(box);
-    //console.log('emptyBoxes:');
-    //console.log(self.emptyBoxes);
   }
   
   

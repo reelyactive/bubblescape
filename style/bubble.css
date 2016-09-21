@@ -6,20 +6,20 @@
   position: absolute;
 }
 
-bubble.ng-enter {
+bubble[fade=true].ng-enter {
   transition:0.3s linear all;
   opacity:0;
 }
 
-bubble.ng-enter.ng-enter-active {
+bubble[fade=true].ng-enter.ng-enter-active {
   opacity:1;
 }
 
-bubble.ng-leave {
+bubble[fade=true].ng-leave {
   transition:0.3s linear all;
   opacity:1;
 }
-bubble.ng-leave.ng-leave-active {
+bubble[fade=true].ng-leave.ng-leave-active {
   opacity:0;
 }
 

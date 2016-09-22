@@ -32,8 +32,6 @@ angular.module('reelyactive.cuttlefish', [ 'ngAnimate', 'ui.bootstrap' ])
         scope.size = scope.size || DEFAULT_BUBBLE_SIZE;
         scope.mode = scope.mode || 'desktop';
         scope.visible = scope.visible || [];
-        scope.toggle = // defaults to false
-          (typeof scope.toggle === 'undefined') ? false : scope.toggle;
         scope.motion = // defaults to true
           (typeof scope.motion === 'undefined') ? true : scope.motion;
 
@@ -67,9 +65,9 @@ angular.module('reelyactive.cuttlefish', [ 'ngAnimate', 'ui.bootstrap' ])
           scope.types.push(TYPE_PRODUCT);
           scope.unsupported = true;
         }
-        scope.types = Bubble.availableTypes(scope.visible, scope.types);
-        if(scope.types.length > 0) {
-          scope.current = scope.types[0];
+        scope.visibleTypes = Bubble.visibleTypes(scope.visible, scope.types);
+        if(scope.visibleTypes.length > 0) {
+          scope.current = scope.visibleTypes[0];
           scope.bubble = new Bubble(scope);
         }
       }
@@ -95,7 +93,6 @@ angular.module('reelyactive.cuttlefish', [ 'ngAnimate', 'ui.bootstrap' ])
       scope: {
         json: "=",
         size: "@",
-        toggle: "=",
         motion: "=",
         visible: "@",
         mode: "@"

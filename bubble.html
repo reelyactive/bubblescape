@@ -1,17 +1,5 @@
 <div class="bubble" id="{{itemID}}">
 
-  <!-- Toggle -->
-
-  <div class="bubble--toggle" ng-show="toggle === true && types.length > 1">
-	
-		<div ng-repeat="type in types" ng-click="$parent.current = type"
-			class="bubble--toggle--button"
-			ng-class="{selected: $parent.current==type}">
-	  	{{type}}
-		</div>
-		
-  </div>
-
 
   <!-- Person -->
 
@@ -28,7 +16,7 @@
 
   <!-- Place -->
 
-	<div class="bubble--photo" ng-if="place" ng-show="current === 'Place'"
+	<div class="bubble--photo" ng-if="place" 
 		ng-style="{'background-image' : 'url(' + place['schema:image'] + ')' }"
 		data-name="{{place['schema:name']}}" data-type="Place">
 		
@@ -41,7 +29,7 @@
 
   <!-- Product -->
 
-	<div class="bubble--photo" ng-if="product" ng-show="current === 'Product'"
+	<div class="bubble--photo" ng-if="product" 
 		ng-style="{'background-image' : 'url(' + product['schema:image'] + ')' }"
 		data-name="{{product['schema:name']}}" data-type="Product">
 		

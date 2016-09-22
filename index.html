@@ -19,10 +19,10 @@
     <script type="text/javascript" src="js/bubblescape.js"></script>
   </head>
 	<body ng-app="bubblescape">
-		<div ng-controller="InteractionCtrl">
+		<div ng-controller="InteractionCtrl" visible="Person">
 			<bubble ng-repeat="(id, device) in devices | orderBy:'receiverId'"
-				ng-if="hasFetchedStory(device)" id="{{id}}" toggle="false" visible="Person,Product"
-				json="getStory(device)" size="140px" mode="ambient" motion="true" fade="false"></bubble>
+				ng-if="ready(device)" id="{{id}}"	json="getStory(device)" toggle="true"
+				size="140px" mode="desktop" motion="true" fade="true"></bubble>
     </div>
   </body>
 </html>

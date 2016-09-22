@@ -36,11 +36,12 @@ angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
  * InteractionCtrl Controller
  * Handles the manipulation of all variables accessed by the HTML view.
  */
-.controller('InteractionCtrl', function($scope, Socket, beaver, cormorant) {
+.controller('InteractionCtrl', function($scope, $attrs, Socket, beaver, cormorant) {
 
   // Variables accessible in the HTML scope
   $scope.devices = beaver.getDevices();
   $scope.stories = cormorant.getStories();
+  $scope.visible = $attrs.visible;
 
   // beaver.js listens on the websocket for events
   beaver.listen(Socket, function() { return !Bubbles.areActive(); });
@@ -73,5 +74,26 @@ angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
   // Get the story corresponding to the given device
   $scope.getStory = function(device) {
     return $scope.stories[device.deviceUrl];
+  };
+  
+  // Check if item has appropiate type
+  $scope.relevant = function(device) {
+    if ($scope.stories[device.deviceUrl] == null) return false;
+    var hasVisibleType = false;
+    var visibleTypes = $scope.visible.split(',');
+    angular.forEach($scope.stories[device.deviceUrl]['@graph'], function(json) {
+      if (!hasVisibleType) {
+        angular.forEach(visibleTypes, function(type) {
+          if (json['@type'] == 'schema:' + type) {
+            hasVisibleType = true;
+          }
+        });
+      }
+    });
+    return hasVisibleType;
+  };
+  
+  $scope.ready = function(device) {
+    return $scope.hasFetchedStory(device) && $scope.relevant(device);
   };
 });

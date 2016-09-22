@@ -76,24 +76,4 @@ angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
     return $scope.stories[device.deviceUrl];
   };
   
-  // Check if item has appropiate type
-  $scope.relevant = function(device) {
-    if ($scope.stories[device.deviceUrl] == null) return false;
-    var hasVisibleType = false;
-    var visibleTypes = $scope.visible.split(',');
-    angular.forEach($scope.stories[device.deviceUrl]['@graph'], function(json) {
-      if (!hasVisibleType) {
-        angular.forEach(visibleTypes, function(type) {
-          if (json['@type'] == 'schema:' + type) {
-            hasVisibleType = true;
-          }
-        });
-      }
-    });
-    return hasVisibleType;
-  };
-  
-  $scope.ready = function(device) {
-    return $scope.hasFetchedStory(device) && $scope.relevant(device);
-  };
 });

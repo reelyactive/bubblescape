@@ -73,12 +73,10 @@ Bubble.prototype = {
     self.labels = $(self.labelClass, self.container);
     self.label = $(self.labelClass, self.bubble);
     
-    //self.subBubbles = [];
     $.each(self.scope.types, function(index, type) {
       if (type != self.scope.current) {
         var subBubble = self.selectByType(type);
         subBubble.addClass(self.flyoutClass.substring(1));
-        //self.subBubbles.push(subBubble);
       }
     });
     
@@ -376,7 +374,13 @@ Bubble.prototype = {
         borderWidth: 0,
         opacity: 0.2
       });
-      subBubble.animate({top: subTopDirection+subTopShift+'px', left: subLeftEnd, opacity: 0.9}, 300);
+      subBubble.animate({
+        top: subTopDirection+subTopShift+'px',
+        left: subLeftEnd,
+        opacity: 0.9
+      }, 300, function(){
+        $(this).css({zIndex: 100});
+      });
       subLeftEnd += subLeftIncrement;
     });
   },

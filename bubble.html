@@ -39,4 +39,17 @@
 
   </div>
 
+
+  <!-- Organization -->
+
+  <div class="bubble--photo" ng-if="organization"
+       ng-style="{'background-image' : 'url(' + organization['schema:logo'] + ')' }"
+       data-name="{{product['schema:name']}}" data-type="Organization">
+    
+    <div class="bubble--label">
+      {{organization["schema:name"]}}
+    </div>
+
+  </div>
+
 </div>

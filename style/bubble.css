@@ -37,29 +37,29 @@ bubble[fade=true].ng-leave.ng-leave-active {
 }
 
 @keyframes forward {
-	from {
-		transform: rotate(0deg)
-		           translate(-10px)
-		           rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg)
-		           translate(-10px) 
-		           rotate(-360deg);
-	}
+  from {
+    transform: rotate(0deg)
+               translate(-10px)
+               rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg)
+               translate(-10px) 
+               rotate(-360deg);
+  }
 }
 
 @keyframes backward {
-	from {
-		transform: rotate(360deg)
-		           translate(-10px)
-		           rotate(-360deg);
-	}
-	to {
-		transform: rotate(0deg)
-		           translate(-10px) 
-		           rotate(0deg);
-	}
+  from {
+    transform: rotate(360deg)
+               translate(-10px)
+               rotate(-360deg);
+  }
+  to {
+    transform: rotate(0deg)
+               translate(-10px) 
+               rotate(0deg);
+  }
 }
 
 .bubble--photo {

@@ -36,7 +36,8 @@ angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
  * InteractionCtrl Controller
  * Handles the manipulation of all variables accessed by the HTML view.
  */
-.controller('InteractionCtrl', function($scope, $attrs, Socket, beaver, cormorant) {
+.controller('InteractionCtrl', function($scope, $attrs, Socket, beaver,
+                                        cormorant) {
 
   // Variables accessible in the HTML scope
   $scope.devices = beaver.getDevices();

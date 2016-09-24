@@ -21,9 +21,8 @@
   <body ng-app="bubblescape">
     <div ng-controller="InteractionCtrl">
       <bubble ng-repeat="(id, device) in devices | orderBy:'receiverId'"
-              ng-if="hasFetchedStory(device)" id="{{id}}"
-              json="getStory(device)" visible="Person" size="160px"
-              mode="desktop" motion="true" fade="true">
+              ng-if="hasFetchedStory(device)" id="{{id}}" size="160px"
+              json="getStory(device)" mode="desktop" motion="true" fade="true">
       </bubble>
     </div>
   </body>

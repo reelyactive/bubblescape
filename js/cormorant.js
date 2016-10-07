@@ -47,15 +47,21 @@ angular.module('reelyactive.cormorant', [])
       var types2 = getStoryTypes(story2);
 
       if(types1.length > 0) {
+        var combined = Object.assign({}, story1);
         for(var cType = 0; cType < types2.length; cType++) {
-          if(types1.indexOf(types2[cType]) < 0) {
-            story1['@graph'].push(story2['@graph'][cType]);
+          var index = types1.indexOf(types2[cType]);
+          if(index < 0) {
+            combined['@graph'].push(story2['@graph'][cType]);
+          }
+          else {
+            combined['@graph'][index] = story2['@graph'][cType];
           }
         }
+        return combined;
       }
-
       return story1;
     }
+
 
     var get = function(url, callback) {
       if(!url || (typeof url !== 'string')) {
@@ -82,17 +88,17 @@ angular.module('reelyactive.cormorant', [])
         });
     };
 
-    var getCombined = function(url1, url2, callback) {
+    var getCombined = function(url1, url2, id, callback) {
       get(url1, function(story1) {
         if(!story1) {
-          return callback(null, url1);
+          return callback(null, id);
         }
         get(url2, function(story2) {
           if(!story2) {
-            return callback(story1, url1);
+            return callback(story1, id);
           }
           var combinedStory = combine(story1, story2);
-          callback(combinedStory, url1);
+          callback(combinedStory, id);
         });
       });
     };

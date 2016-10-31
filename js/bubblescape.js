@@ -5,7 +5,7 @@
 
 
 // Constant definitions
-DEFAULT_SOCKET_URL = 'http://www.hyperlocalcontext.com/reelyactive';
+DEFAULT_SOCKET_URL = 'https://www.hyperlocalcontext.com/notman';
 
 
 /**

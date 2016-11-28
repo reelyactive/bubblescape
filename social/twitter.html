@@ -1,14 +1,14 @@
 <div class="tweets overlay--content">
-	<a href="http://twitter.com/{{user.username}}" target="_blank">
+  <a href="http://twitter.com/{{user.username}}" target="_blank">
     <div class="overlay--header">
       <div class="overlay--header--name">{{user.name}}</div> on Twitter
     </div>
   </a>
-	<div class="twitter--bio" ng-bind-html="user.bio"></div>
-	<div ng-repeat="tweet in tweets" class="tweet">
+  <div class="twitter--bio" ng-bind-html="user.bio"></div>
+  <div ng-repeat="tweet in tweets" class="tweet">
     <div class="content" ng-bind-html="tweet.text"></div>
     <a href="{{tweet.permalink}}" class="timestamp" target="_blank">
-			{{tweet.timestamp | date:"MMMM d',' h:mm a"}}
-		</a>
+      {{tweet.timestamp | date:"MMMM d',' h:mm a"}}
+    </a>
   </div>
 </div>

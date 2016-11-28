@@ -18,7 +18,8 @@ DEFAULT_SOCKET_URL = 'http://www.hyperlocalcontext.com/reelyactive';
  */
 angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
                                'reelyactive.cormorant',
-                               'reelyactive.cuttlefish', 'ngSanitize'])
+                               'reelyactive.cuttlefish',
+                               'reelyactive.bottlenose', 'ngSanitize'])
 
 
 /**

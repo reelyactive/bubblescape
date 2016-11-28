@@ -43,6 +43,14 @@ Bubble.visibleTypes = function(visible, all) {
   
 }
 
+Bubble.overlayActive = function() {
+  if ($('.overlay').length > 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 Bubble.prototype = {
   
   initialize: function(scope) {
@@ -125,11 +133,9 @@ Bubble.prototype = {
     self.borderSize = self.size / 10;
     self.labelTop = self.size * 0.9;
     self.containerSize = self.size + self.borderSize*6;
-    
-    //self.place();
+    self.flyoutOpacity = 0.9;
   
     var emptyBox = Placement.findAvailable(self.containerSize);
-    //console.log(emptyBox);
     self.box = emptyBox.box;
     self.position = emptyBox.pos;
     
@@ -189,10 +195,6 @@ Bubble.prototype = {
             var icon = $('<a class="'+self.iconClass.substring(1)+'" />');
             icon.data('service', serviceName);
             icon.data('url', url);
-            icon.attr({
-              'href': url,
-              'target': '_blank'
-            });
             // set image
             if (service.hasOwnProperty('image')) {
               icon.css('background-image', 'url('+service.image+')');
@@ -213,6 +215,23 @@ Bubble.prototype = {
               'tooltip-placement': 'top',
               'tooltip-append-to-body': true
             });
+            // set overlay or href
+            if (service.hasOwnProperty('overlay')
+                && angular.module('reelyactive.bottlenose')) {
+              icon.click(function(event) {
+                icon.toggleClass('active');
+                if (icon.hasClass('active')) {
+                  self.showOverlay(serviceName, url, event);
+                } else {
+                  self.closeOverlay();
+                }
+              });
+            } else {
+              icon.attr({
+                'href': url,
+                'target': '_blank'
+              });
+            }
             // bind tooltip unhover handler
             icon.bind('mouseleave.tooltip', function() {
               setTimeout(function() {
@@ -226,6 +245,125 @@ Bubble.prototype = {
         });
       });
     });
+  },
+  
+  showOverlay: function(serviceName, url, clickEvent) {
+    var self = this;
+    
+    clickEvent.stopPropagation();
+    
+    self.overlay = $('<div class="overlay"></div>');
+    var overlayLoader = $('<div class="overlay--loader">Loading...</div>');
+    overlayLoader.appendTo(self.overlay);
+    self.overlayArrow = $('<div class="arrow"></div>');
+    
+    $('body').append(self.overlay);
+    $('body').append(self.overlayArrow);
+    
+    var bubblePos = self.bubble.offset();
+    var arrowWidth = 32;
+    var arrowTop =
+      bubblePos.top
+      + self.bubble.outerHeight()/2
+      - 20;
+    
+    if (bubblePos.left < $(window).width()/2) { // overlay right of bubble
+      
+      var overlayLeft =
+        bubblePos.left
+        + self.container.width()
+        - arrowWidth/3;
+        
+      self.overlayArrow.css({
+        left: overlayLeft - arrowWidth,
+        top: arrowTop,
+        borderRight: arrowWidth+'px solid white',
+        borderLeft: 'none'
+      });
+      
+    } else { // overlay left of bubble
+      
+      var overlayLeft =
+        bubblePos.left
+        - self.overlay.width()
+        + arrowWidth/3;
+        
+      self.overlayArrow.css({
+        left: overlayLeft + self.overlay.width(),
+        top: arrowTop,
+        borderLeft: arrowWidth+'px solid white',
+        borderRight: 'none'
+      });
+    }
+    
+    var overlayTop =
+      bubblePos.top
+      + self.bubble.outerHeight()/2
+      - self.overlay.outerHeight()/2;
+    
+    self.overlay.css({
+      left: overlayLeft+'px',
+      top: overlayTop+'px'
+    });
+    
+    self.setOverlayCloseEvent();
+    
+    self.fillOverlay(serviceName, url);
+  },
+  
+  fillOverlay: function(serviceName, url) {
+    var self = this;
+    
+    var overlayContainer = $('<div><'+serviceName+'></'+serviceName+'></div>');
+    self.overlayContent = $(serviceName, overlayContainer);
+    self.overlayContent.attr({url: "'"+url+"'"});
+    self.overlayContent.hide();
+    
+    $('.overlay').append(overlayContainer);
+    
+    self.overlayContent.on('ready', function() {
+      self.openOverlay();
+    });
+  },
+  
+  openOverlay: function() {
+    var self = this;
+    
+    var margin = 20;
+    
+    var css = {
+      top: margin,
+      height: $(window).height() - margin*2
+    }
+    
+    $('.overlay--loader').fadeOut(300, function() {
+      self.overlay.animate(css, 500, function() {
+        self.overlayContent.show();
+        $('.overlay--content').fadeTo(300, 1.0, function() {
+          self.setOverlayCloseEvent();
+        });
+      });
+    });
+  },
+  
+  setOverlayCloseEvent: function() {
+    var self = this;
+    self.overlayCloseClick = $(document).click(function(event) { 
+      if(!$(event.target).closest('.overlay .arrow').length) {
+        self.closeOverlay();
+        if (!$(event.target).closest(self.bubble).length) {
+          self.bubble.trigger('mouseout');
+        }
+      }        
+    });
+  },
+  
+  closeOverlay: function() {
+    var self = this;
+    self.overlayCloseClick.off();
+    self.overlay.remove();
+    self.overlayArrow.remove();
+    self.icons().removeClass('active');
   },
   
   getIconPosition: function (angle) {
@@ -301,20 +439,21 @@ Bubble.prototype = {
     
     self.bubble.hover(function() {
       
+      if (Bubble.overlayActive()) return false;
       if (self.bubble.hasClass('hover')) return false;
       
       Bubbles.active = true;
       self.stopFloating();
       self.animateFlyouts();
-      self.allOtherBubbles().fadeTo(150, 0.2);
+      self.allOtherBubbles().css({opacity: 0.2});
       
       self.bubble.addClass('hover');
       self.label.css({backgroundColor: 'transparent'});
       self.label.animate({
         top: self.size + (self.borderSize/3) + 'px'
-      }, 300);
+      }, 200);
       
-      self.bubble.animate(self.hoverAnimation, 300, function() {
+      self.bubble.animate(self.hoverAnimation, 200, function() {
         if (self.bubble.hasClass('hover')) {
           self.revealIcons();
         }
@@ -322,12 +461,15 @@ Bubble.prototype = {
       
     }, function() { // unhover
       
+      if (Bubble.overlayActive()) return false;
       if ($('.tooltip:hover').length > 0) return false;
       
       self.bubble.finish();
       self.label.finish();
       self.icons().finish();
       self.bubble.removeClass('hover');
+      
+      $('.overlay').remove();
       
       self.icons().hide();
       self.bubble.css(self.cssReset);
@@ -336,7 +478,6 @@ Bubble.prototype = {
         top: self.labelTop
       });
       
-      self.allOtherBubbles().finish();
       self.allOtherBubbles().css({opacity: 1.0});
       self.resumeFloating();
       Bubbles.active = false;
@@ -372,13 +513,12 @@ Bubble.prototype = {
         top: bubblePos.top+self.borderSize,
         left: bubblePos.left+self.borderSize,
         borderWidth: 0,
-        opacity: 0.2
+        opacity: self.flyoutOpacity
       });
       subBubble.animate({
         top: subTopDirection+subTopShift+'px',
-        left: subLeftEnd,
-        opacity: 0.9
-      }, 300, function(){
+        left: subLeftEnd
+      }, 200, function(){
         $(this).css({zIndex: 100});
       });
       subLeftEnd += subLeftIncrement;
@@ -456,7 +596,8 @@ var BubbleServices = {
   Twitter: {
     keyString: 'twitter.com',
     image: 'images/icons/twitter.png',
-    tooltip: "See {{name}}'s tweets"
+    tooltip: "See {{name}}'s tweets",
+    overlay: true
   },
   
   LinkedIn: {
@@ -673,6 +814,7 @@ var Compiler = { // need Angular to recompile new elements after DOM manipulatio
     oldAppend = $.fn.append;
     $.fn.append = function()
     {
+      console.log('recompile');
       var isFragment =
         arguments[0][0] && arguments[0][0].parentNode
         && arguments[0][0].parentNode.nodeName == "#document-fragment";

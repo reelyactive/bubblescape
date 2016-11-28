@@ -16,13 +16,14 @@
     <script type="text/javascript" src="js/cormorant.js"></script>
     <script type="text/javascript" src="js/bubble.js"></script>
     <script type="text/javascript" src="js/cuttlefish.js"></script>
+    <script type="text/javascript" src="js/bottlenose.js"></script>
     <script type="text/javascript" src="js/bubblescape.js"></script>
   </head>
 	<body ng-app="bubblescape">
 		<div ng-controller="InteractionCtrl">
 			<bubble ng-repeat="(id, device) in devices | orderBy:'receiverId'"
 				ng-if="hasFetchedStory(device)" id="{{id}}"	json="getStory(device)"
-				visible="Person" size="160px" mode="desktop" motion="true" fade="true">
+				visible="Person,Place,Product" size="140px" mode="desktop" motion="true" fade="false">
 			</bubble>
     </div>
   </body>

@@ -349,7 +349,7 @@ Bubble.prototype = {
   setOverlayCloseEvent: function() {
     var self = this;
     self.overlayCloseClick = $(document).click(function(event) { 
-      if(!$(event.target).closest('.overlay .arrow').length) {
+      if(!$(event.target).closest('.overlay').length) {
         self.closeOverlay();
         if (!$(event.target).closest(self.bubble).length) {
           self.bubble.trigger('mouseout');

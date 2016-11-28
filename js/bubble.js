@@ -115,7 +115,7 @@ Bubble.prototype = {
         if (overlap) collision = true;
       });
       if (!collision) {
-        console.log('place found!');
+        //console.log('place found!');
         placed = true;
         self.position = {x: randLeft, y: randTop};
       }
@@ -239,7 +239,7 @@ Bubble.prototype = {
               }, 200);
             });
             // add to bubble
-            console.log('Adding icon to ' + type);
+            //console.log('Adding icon to ' + type);
             icon.appendTo(self.selectByType(type));
           }
         });
@@ -582,7 +582,7 @@ Bubble.prototype = {
   
   removed: function() {
     var self = this;
-    console.log('this bubble removed');
+    //console.log('this bubble removed');
     if (self.position) Placement.boxNowEmpty(self.box);
   }
   
@@ -630,7 +630,7 @@ var Bubbles = {
   },
   
   remove: function(id) {
-    console.log('removed ' + id);
+    //console.log('removed ' + id);
   }
   
 }
@@ -768,7 +768,7 @@ var Loader = {
   },
   
   afterLoad: function(name) {
-    console.log('initing after ' + name);
+    //console.log('initing after ' + name);
     switch(name) {
       case 'jQuery':
         (function($){
@@ -814,7 +814,6 @@ var Compiler = { // need Angular to recompile new elements after DOM manipulatio
     oldAppend = $.fn.append;
     $.fn.append = function()
     {
-      console.log('recompile');
       var isFragment =
         arguments[0][0] && arguments[0][0].parentNode
         && arguments[0][0].parentNode.nodeName == "#document-fragment";

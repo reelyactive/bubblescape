@@ -80,7 +80,9 @@ angular.module('reelyactive.cuttlefish', [ 'ngAnimate', 'ui.bootstrap' ])
       }
       
       scope.$on('$destroy', function() {
-        if (scope.bubble !== undefined) scope.bubble.removed();
+        if(scope.bubble !== undefined) {
+          scope.bubble.removed();
+        }
       });
 
       scope.$watch(attrs.json, function(json) {

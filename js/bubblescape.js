@@ -5,7 +5,7 @@
 
 
 // Constant definitions
-DEFAULT_SOCKET_URL = 'http://www.hyperlocalcontext.com/reelyactive';
+DEFAULT_SOCKET_URL = 'https://www.hyperlocalcontext.com/notman';
 
 
 /**
@@ -37,7 +37,8 @@ angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
  * InteractionCtrl Controller
  * Handles the manipulation of all variables accessed by the HTML view.
  */
-.controller('InteractionCtrl', function($scope, $attrs, Socket, beaver, cormorant) {
+.controller('InteractionCtrl', function($scope, $attrs, Socket, beaver,
+                                        cormorant) {
 
   // Variables accessible in the HTML scope
   $scope.devices = beaver.getDevices();
@@ -49,32 +50,33 @@ angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
 
   // Handle events pre-processed by beaver.js
   beaver.on('appearance', function(event) {
-    handleEvent('appearance', event);
+    handleEvent(event);
   });
   beaver.on('displacement', function(event) {
-    handleEvent('displacement', event);
+    handleEvent(event);
   });
   beaver.on('keep-alive', function(event) {
-    handleEvent('keep-alive', event);
+    handleEvent(event);
   });
   beaver.on('disappearance', function(event) {
-    handleEvent('disappearance', event);
+    handleEvent(event);
   });
 
   // Handle an event
-  function handleEvent(type, event) {
-    cormorant.getStory(event.deviceUrl, function() {});
-    cormorant.getStory(event.receiverUrl, function() {});
+  function handleEvent(event) {
+    var deviceId = event.deviceId;
+    var deviceUrl = event.deviceUrl;
+    var receiverUrl = event.receiverUrl;
+
+    cormorant.getCombinedStory(deviceUrl, receiverUrl, deviceId,
+                               function(story, id) {
+      beaver.addDeviceProperty(id, 'story', story);
+    });
   }
 
   // Verify if the device's story has been fetched
   $scope.hasFetchedStory = function(device) {
-    return $scope.stories.hasOwnProperty(device.deviceUrl);
-  };
-
-  // Get the story corresponding to the given device
-  $scope.getStory = function(device) {
-    return $scope.stories[device.deviceUrl];
+    return device.hasOwnProperty('story');
   };
   
 });

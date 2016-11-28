@@ -4,7 +4,7 @@
  */
 
 
-BOTTLENOSE_SERVER = 'http://bottlenose.herokuapp.com';
+BOTTLENOSE_SERVER = 'https://bottlenose.herokuapp.com';
 
 angular.module('reelyactive.bottlenose', [])
 

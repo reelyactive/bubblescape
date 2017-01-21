@@ -22,9 +22,9 @@
   <body ng-app="bubblescape">
     <div ng-controller="InteractionCtrl">
       <bubble ng-repeat="(id, device) in devices | orderBy:'receiverId'"
-              ng-if="hasFetchedStory(device)" id="{{id}}" size="160px"
+              ng-if="hasFetchedStory(device)" id="{{id}}" size="140px"
               json="device.story" mode="desktop" motion="true" fade="true"
-              visible="Person,Product,Organization">
+              visible="Person,Product">
       </bubble>
     </div>
   </body>

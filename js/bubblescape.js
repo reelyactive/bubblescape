@@ -5,7 +5,7 @@
 
 
 // Constant definitions
-DEFAULT_SOCKET_URL = 'https://www.hyperlocalcontext.com/reelyactive';
+DEFAULT_SOCKET_URL = 'https://www.hyperlocalcontext.com/notman';
 
 
 /**
@@ -44,7 +44,7 @@ angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
   $scope.devices = beaver.getDevices();
   $scope.stories = cormorant.getStories();
   $scope.visible = $attrs.visible;
-/*
+
   // beaver.js listens on the websocket for events
   beaver.listen(Socket, function() { return !Bubbles.areActive(); });
 
@@ -72,7 +72,7 @@ angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
                                function(story, id) {
       beaver.addDeviceProperty(id, 'story', story);
     });
-  }*/
+  }
 
   // Verify if the device's story has been fetched
   $scope.hasFetchedStory = function(device) {

@@ -16,7 +16,7 @@ Champagne.ready(function() {
 }
 ~~~~~
 
-Similar to how jQuery's `$(document).ready()` waits until the DOM has finished loading, `Champagne.ready()` waits until all the dynamically-added JavaScript files have loaded. champagne automatically bootstraps the new module at the appropriate time.
+Similar to how jQuery's `$(document).ready()` accepts a function to execute when the DOM has finished loading, code passed to `Champagne.ready()` is executed after all the dynamically-added JavaScript files have loaded. champagne automatically bootstraps the new module at the appropriate time.
 
 In our HTML, bubbles are created with the `<bubble>` element, corresponding to a directive in cuttlefish.
 

@@ -4,8 +4,13 @@ html {
 }
 
 body {
-  background: #0770a2;
- /* background-image: url(http://192.168.0.101/images/sky3.jpg);
-  background-size: cover;*/
+  background: grey;
   font-family: 'Source Sans Pro', sans-serif;
+}
+
+#bubbles {
+  width: 900px;
+  height: 600px;
+  background: #0770a2;
+  margin: 50px;
 }

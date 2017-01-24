@@ -1,2 +1,5 @@
 # Temporary files
 *~
+node_modules
+server.js
+settings.db

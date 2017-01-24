@@ -1,26 +1,17 @@
-/**
- * Copyright reelyActive 2016
- * We believe in an open Internet of Things
- */
+Champagne.enableSockets();
 
-function uncork() {
+Champagne.ready(function() {
   
   // Constant definitions
-  DEFAULT_SOCKET_URL = 'https://www.hyperlocalcontext.com/notman';
+  DEFAULT_SOCKET_URL = 'https://www.hyperlocalcontext.com/reelyactive';
 
 
   /**
    * bubblescape Module
    * All of the JavaScript specific to the dashboard is contained inside this
-   * angular module.  The only external dependencies are:
-   * - beaver, cormorant and cuttlefish (reelyActive)
-   * - socket.io (btford)
-   * - ngSanitize (angular)
+   * angular module.  The only external dependency is champagne.
    */
-  angular.module('bubblescape', ['btford.socket-io', 'reelyactive.beaver',
-                                 'reelyactive.cormorant',
-                                 'reelyactive.cuttlefish',
-                                 'reelyactive.bottlenose', 'ngSanitize'])
+  angular.module('bubblescape', ['champagne'])
 
 
   /**
@@ -82,6 +73,4 @@ function uncork() {
 
   });
   
-  Champagne.bootstrap('bubblescape');
-  
-}
+});

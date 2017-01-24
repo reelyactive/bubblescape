@@ -21,3 +21,14 @@ Similar to how jQuery's `$(document).ready()` waits until the DOM has finished l
 In our HTML, bubbles are created with the `<bubble>` element, corresponding to a directive in cuttlefish.
 
 By default, the bubbles will be placed randomly around the browser window. However, it's easy to contain the bubbles within a div: just add `id="bubbles"` to the containing div and the bubbles will be placed within that element only.
+
+**index.html**:
+~~~~
+<div ng-controller="InteractionCtrl" id="bubbles">
+    <bubble ng-repeat="(id, device) in devices | orderBy:'receiverId'"
+            ng-if="hasFetchedStory(device)" size="140px"
+            json="device.story" motion="true" fade="true"
+            visible="Person,Product">
+    </bubble>
+</div>
+~~~~

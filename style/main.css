@@ -4,13 +4,12 @@ html {
 }
 
 body {
-  background: grey;
+  background: #0770a2;
   font-family: 'Source Sans Pro', sans-serif;
 }
 
 #bubbles {
   width: 900px;
   height: 600px;
-  background: #0770a2;
   margin: 50px;
 }

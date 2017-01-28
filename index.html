@@ -24,7 +24,7 @@
       <bubble ng-repeat="(id, device) in devices | orderBy:'receiverId'"
               ng-if="hasFetchedStory(device)" id="{{id}}" size="140px"
               json="device.story" mode="desktop" motion="true" fade="true"
-              visible="Person,Product">
+              visible="Person,Product,Organization">
       </bubble>
     </div>
   </body>

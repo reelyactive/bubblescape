@@ -4,12 +4,14 @@ html {
 }
 
 body {
-  background: #0770a2;
+  background: #398db5;
   font-family: 'Source Sans Pro', sans-serif;
 }
 
+/* The properties of the bubble container are specified here */
 #bubbles {
-  width: 900px;
-  height: 600px;
-  margin: 50px;
+  background: #0770a2;
+  width: calc(100vw - 20px);
+  height: calc(100vh - 20px);
+  margin: 10px;
 }

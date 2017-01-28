@@ -3,16 +3,21 @@
   <head>
     <title> reelyActive Bubblescape </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Template for the dynamic representation of the occupants of a space as bubbles. We believe in an open Internet of Things.">
     <link rel="stylesheet" href="style/main.css">
+    <!----- Champagne loads all the modules necessary for bubbles ----->
     <script type="text/javascript" src="http://champagne.reelyactive.com/champagne.js"></script>
+    <!----- Bubblescape specifies the collection of bubble data ----->
     <script type="text/javascript" src="js/bubblescape.js"></script>
   </head>
   <body>
-    <div ng-controller="InteractionCtrl">
+    <!----- Bubbles are contained within the div with id="bubbles" ----->
+    <div ng-controller="InteractionCtrl" id="bubbles">
+      <!----- The bubble directive renders the given device's story ----->
       <bubble ng-repeat="(id, device) in devices | orderBy:'receiverId'"
               ng-if="hasFetchedStory(device)" size="140px"
               json="device.story" motion="true" fade="true"
-              visible="Person,Product">
+              visible="">
       </bubble>
     </div>
   </body>
